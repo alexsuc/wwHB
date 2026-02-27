@@ -107,12 +107,13 @@
             max-width: 800px;
             line-height: 1.5;
             padding: 0 20px;
+            margin-bottom: 120px; /* Отступ от бегущей строки */
         }
         
         /* Стили для бегущей строки */
         .marquee-container {
             position: absolute;
-            bottom: 15%; 
+            bottom: 5%; /* Опустили ниже */
             width: 110%; 
             background-color: #ff4757;
             padding: 15px 0;
@@ -152,6 +153,15 @@
         @keyframes fall {
             to { transform: translateY(110vh) rotate(720deg); }
         }
+
+        /* АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
+        @media (max-width: 600px) {
+            .huge-text { font-size: 36px; }
+            .sub-text { font-size: 18px; margin-bottom: 150px; }
+            .marquee-container { bottom: 8%; padding: 10px 0; transform: rotate(-5deg); }
+            .marquee-text { font-size: 18px; }
+            .item-photo { height: 200px; }
+        }
     </style>
 </head>
 <body>
@@ -182,7 +192,7 @@
         
         <div class="marquee-container">
             <div class="marquee-text">
-                🚨 СРОЧНЫЕ НОВОСТИ: В ЭТОМ ГОДУ ТЫ ПОТРАТИЛ БЮДЖЕТ БОЛГАРИИ НА ТЕМКИ 🇧🇬 • СБИЛ ШАХЕД  💥 • ЗАЛЕТЕЛ НО НЕ ЮЛЯ 💸 • ВЫКУПИЛ АТБ И ОТКРЫЛ ТАМ СЕКОНД-ХЕНД 🏬 • ЗАКАМИЛ СЕРЕГУ НА ТРЕШУ 🚀 • ЛЮБИЛ МАМУ ❄️ 🚨
+                🚨 СРОЧНЫЕ НОВОСТИ: В ЭТОМ ГОДУ ТЫ ПОТРАТИЛ БЮДЖЕТ БОЛГАРИИ НА ТЕМКИ 🇧🇬 • СБИЛ ШАХЕД  💥 • ЗАЛЕТЕЛ НО НЕ ЮЛЯ 💸 • ВЫКУПИЛ АТБ И ОТКРЫЛ ТАМ СЕКОНД-ХЕНД 🏬 • ЗАКАМИЛ СЕРЕГУ НА ТРЕШУ 🚀 • ЛЮБИЛ МАМУ, МЕНЯ, БЛЯШКУ ❄️ 🚨
             </div>
         </div>
     </div>
@@ -289,18 +299,19 @@
 
         function startConfetti() {
             const colors = ['#00ff88', '#ff4757', '#1e90ff', '#ffa502', '#ffffff'];
-            for (let i = 0; i < 150; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.classList.add('confetti');
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    document.body.appendChild(confetti);
-                    
-                    setTimeout(() => confetti.remove(), 5000);
-                }, i * 50);
-            }
+            
+            // Запускаем бесконечный генератор конфетти
+            setInterval(() => {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                // Удаляем конфетти через 5 секунд, чтобы не забить память телефона
+                setTimeout(() => confetti.remove(), 5000);
+            }, 50); // каждые 50мс вылетает новая бумажка
         }
 
         window.onload = loadItem;
