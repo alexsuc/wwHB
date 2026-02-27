@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С 19-летием, Перекуп!</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background-color: #121212; 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            text-align: center; 
+            overflow: hidden; 
+        }
+        
+        #gameContainer {
+            background: #1e1e1e; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8); 
+            max-width: 400px; 
+            width: 90%; 
+            transition: opacity 0.5s;
+        }
+        h1 { color: #00ff88; font-size: 24px; margin-bottom: 5px; }
+        h2 { color: #aaaaaa; font-size: 14px; margin-top: 0; margin-bottom: 15px; font-weight: normal; }
+        .counter { color: #ffb8b8; font-size: 14px; margin-bottom: 15px; font-weight: bold; }
+        
+        .item-photo {
+            width: 100%;
+            height: 250px;
+            object-fit: contain;
+            background-color: #111;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #333;
+        }
+
+        .item-box { 
+            font-size: 20px; 
+            font-weight: bold; 
+            margin-bottom: 20px; 
+            min-height: 50px;
+        }
+
+        .buttons { display: flex; gap: 10px; justify-content: center; }
+        button { 
+            padding: 15px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            width: 100%; 
+        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-sell { background-color: #ff4757; color: white; }
+        .btn-sell:hover:not(:disabled) { background-color: #ff6b81; transform: translateY(-2px); }
+        .btn-keep { background-color: #1e90ff; color: white; }
+        .btn-keep:hover:not(:disabled) { background-color: #70a1ff; transform: translateY(-2px); }
+        
+        .result { 
+            margin-top: 20px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            min-height: 60px; 
+            padding: 10px;
+            border-radius: 8px;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .win { color: #00ff88; }
+        .lose { color: #ffa502; }
+
+        #endScreen {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #121212;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .huge-text {
+            font-size: 50px;
+            font-weight: 900;
+            color: #00ff88;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            animation: pulse 1.5s infinite;
+            margin: 0 20px;
+        }
+        .sub-text {
+            font-size: 24px;
+            color: #ffffff;
+            margin-top: 20px;
+            max-width: 800px;
+            line-height: 1.5;
+            padding: 0 20px;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            z-index: 5;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <h1>С 19-летием, Бизнесмен! 🎂</h1>
+        <h2>Симулятор перекупа: залутай профит или стань леймом</h2>
+        
+        <div class="counter" id="roundCounter">Загрузка...</div>
+
+        <img id="itemImage" class="item-photo" src="" alt="Фото вещи">
+        <div class="item-box" id="itemDisplay">Загрузка лота...</div>
+
+        <div class="buttons">
+            <button class="btn-sell" id="btnSell" onclick="makeChoice('sell')">Продать 💸</button>
+            <button class="btn-keep" id="btnKeep" onclick="makeChoice('keep')">Оставить 📦</button>
+        </div>
+
+        <div class="result" id="resultDisplay">Тяни лот, посмотрим, на что ты способен!</div>
+    </div>
+
+    <div id="endScreen">
+        <div class="huge-text">С ДНЕМ РОЖДЕНИЯ! 19 ЛЕТ! 🎉</div>
+        <div class="sub-text">
+            Бро, желаю тебе в этом году бешеного профита, идеального легит-чека по жизни и чтобы все твои темки выстреливали x100!<br><br>
+            Оставайся таким же ровным типом, руби кэш и ни в чем себе не отказывай. Обнял - приподнял! 💸🤝
+        </div>
+    </div>
+
+    <script>
+        const items = [
+          { name: "Убитые Air Force 1 свага", img: "img/force.jpeg" },
+          { name: "Паленая куртка Stone Island фу блять бож", img: "img/stone.jpg" },
+          { name: "Лимитированная тишка от Supreme детка", img: "img/supreme.webp" },
+          { name: "Носки Gucci после деда", img: "img/soskse.jpeg" },
+          { name: "Кепка Ralph Lauren с секонда", img: "img/kepka.jpeg" },
+          { name: "Рюкзак Nike, забытый в маршрутке", img: "img/bag.jpg" },
+          { name: "Очки Prada (бля буду, оригинал)", img: "img/sun.jpg" },
+          { name: "Кроссовки Yeezy Boost (старая школа)", img: "img/eze.jpeg" },
+          { name: "Худи Balenciaga (оверсайз брат)", img: "img/balen.jpg" }
+        ];
+
+        const winMessages = [
+            "Красава! Чуйка работает. С 19-летием, желаю маржу х10! 🤑",
+            "Легит чек пройден! +Вайб и +Профит. С днюхой! 🎉",
+            "Сделка века! Желаю в 19 лет только удачных темок! 🚀",
+            "Ты просто Волк с Уолл-Стрит! С днем рождения, бро! 💸",
+            "Фиксанул плюс! Пусть весь 19-й год будет таким же удачным! 📈"
+        ];
+
+        const loseMessages = [
+            "Ну ты и мамонт 🦣... В 19 лет такие ошибки делать!",
+            "Фиксанул жесткий минус. Ничего, зато на год мудрее стал! 📉",
+            "Скамнулся на ровном месте. Эх, бизнесмен... 😂",
+            "Неликвид полный! Оставь эту паль в своих 18-ти! 🗑️",
+            "Налоговая уже выехала. Повезло, что тебе 19, прощаем! 🚓"
+        ];
+
+        let currentRound = 0;
+        let correctChoice = '';
+        let isProcessing = false;
+
+        function loadItem() {
+            // Теперь скрипт сам проверяет длину массива items
+            if (currentRound >= items.length) {
+                triggerEndScreen();
+                return;
+            }
+
+            const currentItem = items[currentRound];
+            document.getElementById("itemDisplay").innerText = currentItem.name;
+            document.getElementById("itemImage").src = currentItem.img;
+            
+            // Счетчик тоже динамический
+            document.getElementById("roundCounter").innerText = `Лот ${currentRound + 1} из ${items.length}`;
+            
+            if (currentRound === 0) {
+                document.getElementById("resultDisplay").innerText = "Тяни лот, посмотрим, на что ты способен!";
+            } else {
+                document.getElementById("resultDisplay").innerText = "Оцениваем следующий лот...";
+            }
+
+            correctChoice = Math.random() > 0.5 ? 'sell' : 'keep';
+            
+            document.getElementById("btnSell").disabled = false;
+            document.getElementById("btnKeep").disabled = false;
+            isProcessing = false;
+        }
+
+        function makeChoice(choice) {
+            if (isProcessing) return; 
+            isProcessing = true;
+
+            document.getElementById("btnSell").disabled = true;
+            document.getElementById("btnKeep").disabled = true;
+
+            const resultDisplay = document.getElementById("resultDisplay");
+
+            if (choice === correctChoice) {
+                const winMsg = winMessages[Math.floor(Math.random() * winMessages.length)];
+                resultDisplay.innerHTML = `<span class="win">✅ ${winMsg}</span>`;
+            } else {
+                const loseMsg = loseMessages[Math.floor(Math.random() * loseMessages.length)];
+                resultDisplay.innerHTML = `<span class="lose">❌ ${loseMsg}</span>`;
+            }
+
+            currentRound++;
+            
+            setTimeout(loadItem, 1500);
+        }
+
+        function triggerEndScreen() {
+            document.getElementById("gameContainer").style.display = "none";
+            const endScreen = document.getElementById("endScreen");
+            endScreen.style.display = "flex";
+            startConfetti();
+        }
+
+        function startConfetti() {
+            const colors = ['#00ff88', '#ff4757', '#1e90ff', '#ffa502', '#ffffff'];
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        window.onload = loadItem;
+    </script>
+</body>
+</html>
