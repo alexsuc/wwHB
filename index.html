@@ -108,6 +108,33 @@
             line-height: 1.5;
             padding: 0 20px;
         }
+        
+        /* Стили для бегущей строки */
+        .marquee-container {
+            position: absolute;
+            bottom: 15%; 
+            width: 110%; 
+            background-color: #ff4757;
+            padding: 15px 0;
+            transform: rotate(-3deg); 
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.6);
+            overflow: hidden;
+            white-space: nowrap;
+            z-index: 20;
+        }
+        .marquee-text {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffffff;
+            text-transform: uppercase;
+            animation: marquee 15s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -131,7 +158,7 @@
 
     <div id="gameContainer">
         <h1>С 19-летием, Бизнесмен! 🎂</h1>
-        <h2>Симулятор перекупа: попробуй заработать тут со мной</h2>
+        <h2>Симулятор перекупа: попробуй заработать тут хихих</h2>
         
         <div class="counter" id="roundCounter">Загрузка...</div>
 
@@ -143,7 +170,7 @@
             <button class="btn-keep" id="btnKeep" onclick="makeChoice('keep')">Оставить 📦</button>
         </div>
 
-        <div class="result" id="resultDisplay">Тяни лот, посмотрим, на что ты способен!</div>
+        <div class="result" id="resultDisplay">ТЫ юливер, посмотрим, на что ты способен!</div>
     </div>
 
     <div id="endScreen">
@@ -151,6 +178,12 @@
         <div class="sub-text">
             САША, желаю тебе в этом году багато грошей, успеха по жизни и чтобы все твои желания исполнялись!<br><br>
             Оставайся таким же ровным, девственником и ни в чем себе не отказывай. Обнял - приподнял! 💸🤝
+        </div>
+        
+        <div class="marquee-container">
+            <div class="marquee-text">
+                🚨 СРОЧНЫЕ НОВОСТИ: В ЭТОМ ГОДУ ТЫ ПОТРАТИЛ БЮДЖЕТ БОЛГАРИИ НА ТЕМКИ 🇧🇬 • СБИЛ ШАХЕД  💥 • ЗАЛЕТЕЛ НО НЕ ЮЛЯ 💸 • ВЫКУПИЛ АТБ И ОТКРЫЛ ТАМ СЕКОНД-ХЕНД 🏬 • ЗАКАМИЛ СЕРЕГУ НА ТРЕШУ 🚀 • ЛЮБИЛ МАМУ ❄️ 🚨
+            </div>
         </div>
     </div>
 
